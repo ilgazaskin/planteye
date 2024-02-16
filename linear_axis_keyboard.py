@@ -73,7 +73,7 @@ def move_relative(distance):
 
 def reset_position():
     try:
-        # Set the desired position to 0 (to reset the current position to zero)
+        # Reset the current position
         node.sdo[0x4000][0x12].raw = 0  # Desired position set to 0
         
         # Toggle command if it has been previously used

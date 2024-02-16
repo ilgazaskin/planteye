@@ -5,19 +5,19 @@ import mplcursors
 
 
 # Drive to the first target position 
-first_target_position = -100000#-230000
+first_target_position = -100000   # 50k roughly corresponds to 15.5 cm
 
 # Drive to the second target position
-second_target_position = 0
+second_target_position = 0      # return to starting position
 
 # CANOpen setup
 network = canopen.Network()
 network.connect(channel='can0', bustype='socketcan')
-node = network.add_node(10, '/home/thorvald/EDS-Dateien/Dunker_BG45ci.eds')
+node = network.add_node(10, '/home/thorvald/EDS-Dateien/Dunker_BG45ci.eds')     # NodeID & .eds file
 
 # Motor Parameters
 EncoderLines = 500  
-EncoderResolution = 4 * EncoderLines
+EncoderResolution = 4 * EncoderLines        # Same settings with DunkerMotoren software
 
 # Controller Feedback (Encoder)
 node.sdo[0x4350][1].raw = 0x96A  # Encoder feedback for the velocity controller
@@ -45,9 +45,9 @@ node.sdo[0x4221][1].raw = 4000 # Current limit - max. positive in mA
 node.sdo[0x4223][1].raw = 4000 # Current limit - max. negative in mA
 
 # Ramps
-node.sdo[0x4340][1].raw = 1800 # VEL_Acc_dV (velocity in rpm)
+node.sdo[0x4340][1].raw = 1800 # VEL_Acc_dV (velocity)
 node.sdo[0x4341][1].raw = 1000 # VEL_Acc_dT (time in ms)
-node.sdo[0x4342][1].raw = 1800 # Vel_Dec_dV (velocity in rpm)
+node.sdo[0x4342][1].raw = 1800 # Vel_Dec_dV (velocity)
 node.sdo[0x4343][1].raw = 1000 # Vel_Dec_dt (time in ms)
 
 # Position Following Error - Window
@@ -57,7 +57,7 @@ node.sdo[0x4732][1].raw = 1000 # Position following error - window
 node.sdo[0x4003][1].raw = 7 # Device mode "position mode"
 
 # Desired Velocity
-node.sdo[0x4300][1].raw = 750 # Desired velocity in rpm
+node.sdo[0x4300][1].raw = 750 # Desired velocity
 
 # Start of the Test Program
 node.sdo[0x4000][1].raw = 1 # Reset error register
@@ -69,12 +69,12 @@ node.sdo[0x4150][1].raw = 1 # Open brake (just in case)
 def is_within_target(actual, target, allowance=1):
     return target - allowance <= actual <= target + allowance
 
-# Data collection
+# Data collection (for plotting)
 positions = []
 times = []
 speeds = []
 
-node.sdo[0x4790][1].raw = first_target_position
+node.sdo[0x4790][1].raw = first_target_position     # Driving command
 
 start_time = time.time()
 actual_position = node.sdo[0x4762][1].raw
@@ -98,7 +98,7 @@ while not is_within_target(actual_position, first_target_position):
 time.sleep(2)
 
 
-node.sdo[0x4790][1].raw = second_target_position
+node.sdo[0x4790][1].raw = second_target_position    #Driving command
 actual_position = node.sdo[0x4762][1].raw
 
 while not is_within_target(actual_position, second_target_position):
