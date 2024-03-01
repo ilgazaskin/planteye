@@ -5,7 +5,7 @@ import mplcursors
 
 
 # Drive to the first target position 
-first_target_position = -287000   # 1cm is 3200 counts
+first_target_position = -295000   # 1cm is 3200 counts
 
 # Drive to the second target position
 second_target_position = 0      # return to starting position
